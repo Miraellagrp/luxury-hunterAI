@@ -18,9 +18,24 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/luxury-hunter', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/luxuryhunter', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+});
+
+// MongoDB connection events
+mongoose.connection.on('connected', () => {
+  console.log('✅ Connected to MongoDB');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('⚠️  MongoDB disconnected');
 });
 
 // Multer configuration for file uploads
